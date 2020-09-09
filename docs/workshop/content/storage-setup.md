@@ -220,7 +220,7 @@ I0721 02:05:02.280048       1 data-processor.go:205] New phase: Complete
 I0721 02:05:02.280128       1 importer.go:160] Import complete
 ~~~
 
-If you're quick, you can view the structure of the importer pod in another window to get some of the configuration it's using:
+If you're quick, you can view the structure of the importer pod in another window to get some of the configuration it's using. Utilizing the lb/bastion system as a second CLI session helps for this type of usuage:
 
 ~~~bash
 $ oc describe pod $(oc get pods | awk '/importer/ {print $1;}')
@@ -282,27 +282,27 @@ Recall that when we setup the `PV` resources we specified the location and path 
 
 ~~~basic
   nfs:
-    path: /mnt/nfs/one
-    server: 192.168.47.16
+    path: /mnt/nfs/store01
+    server: 136.144.55.157
 ~~~
 
-If we have a look on our NFS server (ie the RHPDS bastion host) we can make sure that it's using this correctly
+If we have a look on our NFS server (ie the lb/bastion host) we can make sure that it's using this correctly
 
-> **NOTE**: In your environment, if your image was 'pv1' rather than 'pv2', adjust the commands to match your setup (check both /mnt/nfs/one and /mnt/nfs/two). 
+> **NOTE**: In your environment, if your image was 'pv1' rather than 'pv2', adjust the commands to match your setup (check both /mnt/nfs/store01 and /mnt/nfs/store02). 
 
 ~~~bash
-[lab-user@bastion ~]$ ls -l /mnt/nfs/one/
+[root@lb-0 ~]$ ls -l /mnt/nfs/store01/
 total 387092
 -rw-r--r--. 1 root root 10737418240 Jul 23 23:32 disk.img
 
-[lab-user@bastion ~]$ sudo qemu-img info /mnt/nfs/one/disk.img
-image: /mnt/nfs/one/disk.img
+[root@lb-0 ~]$ sudo qemu-img info /mnt/nfs/store01/disk.img
+image: /mnt/nfs/store01/disk.img
 file format: raw
 virtual size: 10G (10737418240 bytes)
 disk size: 427M
 
-[lab-user@bastion ~]$ sudo file /mnt/nfs/one/disk.img
-/mnt/nfs/one/disk.img: DOS/MBR boot sector
+[root@lb-0 ~]$ sudo file /mnt/nfs/store01/disk.img
+/mnt/nfs/store01/disk.img: DOS/MBR boot sector
 ~~~
 
 We'll use this NFS-based Centos8 image when we provision a virtual machine in a future step.
@@ -359,7 +359,7 @@ cluster-august-lhrd5-worker-6w624   Ready                      worker   134m   v
 cluster-august-lhrd5-worker-mh52l   Ready,SchedulingDisabled   worker   134m   v1.18.3+b74c5ed
 ~~~
 
-> **NOTE**: This will take a few minutes (allow at least 10 mins in an RHPDS-based lab) to reflect on the cluster, and causes the worker nodes to reboot. You'll witness a disruption on the lab guide functionality where you will see the consoles hang and/or display a "Closed" image. In some cases we have needed to refresh the entire browser.
+> **NOTE**: This will take a few minutes (allow at least 15 mins) to reflect on the cluster, and causes the worker nodes to reboot. You'll witness a disruption on the lab guide functionality where you will see the consoles hang and/or display a "Closed" image. In some cases we have needed to refresh the entire browser.
 
 <img src="img/disconnected-terminal.png" width="80%"/>
 
