@@ -1,6 +1,7 @@
 ## OpenShift Virtualization Hands-on Lab (Packet Cloud)
 
 **Authors**: [Rhys Oxenham](mailto:roxenham@redhat.com) and [August Simonelli](mailto:asimonel@redhat.com)
+
 **Packet revision**: [Mike Savage](mailto:savage@redhat.com)
 
 # Welcome!
