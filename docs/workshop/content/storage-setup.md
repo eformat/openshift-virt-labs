@@ -39,45 +39,42 @@ nfs                  kubernetes.io/no-provisioner   Delete          Immediate   
 standard (default)   kubernetes.io/cinder           Delete          WaitForFirstConsumer   true                   19h
 ~~~
 
->**NOTE**: The second class there, called **standard** is for OpenStack's Cinder service and is an artefact of the RHPDS' deployment. We won't use it for these labs, as it provides only an RWO access method which is not ideal for VMs and Live Migration. 
+>**NOTE**: The second class there, called **standard** is for general, automated, PV creation. 
 
-Let's just make sure that the default storage class is now the NFS one as opposed to the Cinder one that we won't be using:
+Next we will create some NFS-backed persistent volumes (PVs) for our VM persistent volume claims (PVCs) to utilize. However, before we do that, let's review the NFS setup we are going to use.
 
-~~~bash
-$ oc patch storageclass standard -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class": "false"}}}'
-storageclass.storage.k8s.io/standard patched
-
-$ oc patch storageclass nfs -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class": "true"}}}'
-storageclass.storage.k8s.io/nfs patched
-~~~
-
-Next we will create some NFS-backed persistent volumes (PVs) for our VM persistent volume claims (PV) to utilise. However, before we do that, let's review the NFS setup we are going to use.
-
-We have deployed a simple NFS server to the RHPDS bastion host. This is the same machine you connected to as lab-user to port forward for the squid. The NFS server is sharing four directories on that host. You can view the setup directly on that bastion (not from within the lab environment's CLI):
+We have deployed a simple NFS server to the Packet loadbalancer/bastion host. This is the same machine you connect to for cluster administration. The NFS server is sharing several directories on that host. You can view the setup directly on that system (not from within the lab environment's CLI):
 
 ~~~bash
-[lab-user@bastion ~]$ ls -l /mnt/nfs/
+[root@lb-0 ~]# ls -l /mnt/nfs/
 total 0
-drwxrwxrwx. 2 root root  6 Jul 23 21:32 four
-drwxrwxrwx. 2 root root 22 Jul 24 01:23 one
-drwxrwxrwx. 2 root root  6 Jul 23 21:32 three
-drwxrwxrwx. 2 root root 22 Jul 24 02:12 two
+drwxrwxrwx 2 root root 6 Sep  9 18:13 ocp
+drwxrwxrwx 2 root root 6 Sep  9 18:13 store00
+drwxrwxrwx 2 root root 6 Sep  9 18:13 store01
+drwxrwxrwx 2 root root 6 Sep  9 18:13 store02
+drwxrwxrwx 2 root root 6 Sep  9 18:13 store03
+drwxrwxrwx 2 root root 6 Sep  9 18:13 store04
+drwxrwxrwx 2 root root 6 Sep  9 18:13 store05
+drwxrwxrwx 2 root root 6 Sep  9 18:13 store06
+drwxrwxrwx 2 root root 6 Sep  9 18:13 store07
+drwxrwxrwx 2 root root 6 Sep  9 18:13 store08
+drwxrwxrwx 2 root root 6 Sep  9 18:13 store09
 ~~~
 
-We will use each one for a different PV which allows us to run four VMs at a time with NFS-backed storage.
+We will use four of these directories (store01-store04), with each of these individual directories associated to a different PV, allowing us to run four VMs, each connected to specifically tailored NFS-backed storage location. We created the remaining storage directories as additional locations for you to test and experiment with.
 
-When creating the PV's we need to tell OpenShift what IP the NFS server is on. This is the same IP the squid is running on in your forward command.
+When creating the PV's we need to tell OpenShift what IP address the NFS server is on.
 
 **Be sure you know and use the address from your setup for the lab steps below. DO NOT CUT AND PASTE THEM WITHOUT CHANGING THE IP TO THE VALUE FOR YOUR DEPLOYMENT.**
 
 ~~~bash
-[lab-user@bastion ~]$ ip a | grep 192
-    inet 192.168.47.16/24 brd 192.168.47.255 scope global dynamic noprefixroute eth0
+[root@lb-0 ~]$ nmcli connection show bond0 | grep ipv4.addresses
+ipv4.addresses:                         136.144.55.157/31, 10.67.10.129/31
 ~~~
 
-As explained, this network is plumbed into the bastion and all the workers as an example of a "public" or "external" (ie not controlled by OpenShift) network. In the example above, you'd use **192.168.47.16** in the PV claims below. 
+As explained, the first address is a "public" or "external" (ie not controlled by OpenShift) network. In the example above, you'd use **136.144.55.157** in the PV claims below. 
 
-Ok, with all that clear, let's create our PVs (**LAST WARNING! Remember to substitute the correct IP and paths for each claim**) - when you create these temporary files, don't forget to edit the file with the correct IP before applying it:
+Ok, with all that clear, let's create our PVs (**LAST WARNING! Remember to substitute the correct IP address and paths for each claim**) - when you create these temporary files, don't forget to edit the file with the correct IP address before applying it:
 
 Return to the web console if you're using it, and then create nfs-pv1:
 
@@ -94,15 +91,15 @@ spec:
   capacity:
     storage: 10Gi
   nfs:
-    path: /mnt/nfs/one
-    server: 192.168.47.16 <------ CHANGEME
+    path: /mnt/nfs/store01
+    server: 136.144.55.157 <------ CHANGEME
   persistentVolumeReclaimPolicy: Delete
   storageClassName: nfs
   volumeMode: Filesystem
 EOF
 
 $ vi nfs1.yaml
-(update the IP with the your bastion VM's IP and remove the arrow/CHANGEME text)
+(update the IP with the your lb/bastion server IP address and remove the arrow/CHANGEME text)
 
 $ oc apply -f nfs1.yaml
 persistentvolume/nfs-pv1 created
@@ -123,15 +120,15 @@ spec:
   capacity:
     storage: 10Gi
   nfs:
-    path: /mnt/nfs/two
-    server: 192.168.47.16 <------ CHANGEME
+    path: /mnt/nfs/store02
+    server: 136.144.55.157 <------ CHANGEME
   persistentVolumeReclaimPolicy: Delete
   storageClassName: nfs
   volumeMode: Filesystem
 EOF
 
 $ vi nfs2.yaml
-(update the IP with the your bastion VM's IP and remove the arrow/CHANGEME text)
+(update the IP with the your lb/bastion server IP address and remove the arrow/CHANGEME text)
 
 $ oc apply -f nfs2.yaml
 persistentvolume/nfs-pv2 created
