@@ -13,7 +13,7 @@ pvc-e2f75a46-7402-4bc6-ac30-acce7acd9feb   29Gi       RWO            Delete     
 
 You should have a PV (likely nfs-pv2, but it doesn't have to be) marked as `Available`.
 
-Next we will create a PVC for that PV that utilises the CDI utility to import a Centos 7 image (from http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2). The syntax should be familiar to you now with the `cdi.kubevirt.io/storage.import.endpoint` annotation indicating the endpoint for CDI to import from.
+Next we will create a PVC for that PV that utilizes the CDI utility to import a Centos 7 image (from http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2). The syntax should be familiar to you now with the `cdi.kubevirt.io/storage.import.endpoint` annotation indicating the endpoint for CDI to import from.
 
 ~~~bash
 $ cat << EOF | oc apply -f -

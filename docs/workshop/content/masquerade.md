@@ -1,6 +1,6 @@
 Up to this point we've provisioned our virtual machines on a single bridged network, i.e. just using more traditional networking models. 
 
-However, OpenShift 4.x utilises Multus as the default CNI, which permits the user to attach multiple network interfaces from different delegate CNI's simultaneously. 
+However, OpenShift 4.x utilizes Multus as the default CNI, which permits the user to attach multiple network interfaces from different delegate CNI's simultaneously. 
 
 One of the models available for OpenShift Virtualization is to provide networking with a combination of attachments, including pod networking, that is, having virtual machines attached to the exact same networks that the container pods are attached to as well. 
 
@@ -21,7 +21,7 @@ interfaces:
     masquerade: {}
 ~~~
 
-* and utilise the existing PVC containing `centos7-clone-nfs` 
+* and utilize the existing PVC containing `centos7-clone-nfs` 
 
 ~~~bash
 volumes:

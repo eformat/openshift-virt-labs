@@ -2,20 +2,20 @@ Now that we've got the OpenShift Virtualization operator deployed, let's configu
 
 >**NOTE**: Switch back to the "**Terminal**" view in your lab environment.
 
-We're going to setup two different types of storage in this section, firstly standard NFS shared storage, and secondly `hostpath` storage which uses the hypervisor's local disks, this is somewhat akin to ephemeral storage provided by OpenStack.
+We're going to setup two different types of storage in this section; firstly, standard NFS shared storage and secondly, `hostpath` storage. `hostpath` storage is local to the hypervisor, a method somewhat akin to the ephemeral storage provided in OpenStack deployments.
 
 First, make sure you're in the default project:
 
 ~~~bash
 $ oc project default
-Now using project "default" on server "https://172.30.0.1:443".
+Already on project "default" on server "https://api.lab01.redhatpartnertech.net:6443".
 ~~~
 
->**NOTE**: If you don't use the default project for the next few lab steps, it's likely that you'll run into some errors - some resources are scoped, i.e. aligned to a namespace, and others are not. Ensuring you're in the default namespace ensures that all of the coming lab steps should flow together.
+>**NOTE**: If you don't use the default project for the next few lab steps, it's likely that you'll run into some errors - some resources are scoped, i.e. aligned to a namespace, and others are not. Ensuring you're in the "default" namespace ensures that all of the coming lab steps should flow together.
 
-Now let's setup a storage class for NFS backed volumes, utilising the `kubernetes.io/no-provisioner` as the provisioner. 
+Now let's setup storage for NFS backed volumes, utilizing the `kubernetes.io/no-provisioner` storage class as the provisioner. 
 
-The `kubernetes.io/no-provisioner` provisioner is generally used for local storage solutions, such as NFS. However it means that **no** dynamic provisioning of volumes is done on demand of a PVC. Instead we have to manually create our PVs for any PVC's to utilise. 
+The `kubernetes.io/no-provisioner` provisioner is generally used for local storage solutions, such as NFS. However, it means that **no** dynamic provisioning of volumes is performed for a request of a PVC. Instead, we have to manually create our PVs for any PVC's to utilize. 
 
 ~~~bash
 $ cat << EOF | oc apply -f -
@@ -34,14 +34,14 @@ Let's view the newly created storage class:
 
 ~~~bash
 $ oc get sc
-NAME                 PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-nfs                  kubernetes.io/no-provisioner   Delete          Immediate              false                  13s
-standard (default)   kubernetes.io/cinder           Delete          WaitForFirstConsumer   true                   19h
+NAME                            PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+managed-nfs-storage (default)   storage.io/nfs                 Delete          Immediate           false                  7h12m
+nfs                             kubernetes.io/no-provisioner   Delete          Immediate           false                  9s
 ~~~
 
->**NOTE**: The second class there, called **standard** is for general, automated, PV creation. 
+>**NOTE**: The second storage class present, called **managed-nfs-storage**, is for general, automated ("managed" by OpenShift), PV creation. 
 
-Next we will create some NFS-backed persistent volumes (PVs) for our VM persistent volume claims (PVCs) to utilize. However, before we do that, let's review the NFS setup we are going to use.
+Next, we will create some NFS-backed persistent volumes (PVs) for our VM persistent volume claims (PVCs) to utilize. However, before we do that, let's review the NFS setup we are going to use.
 
 We have deployed a simple NFS server to the Packet loadbalancer/bastion host. This is the same machine you connect to for cluster administration. The NFS server is sharing several directories on that host. You can view the setup directly on that system (not from within the lab environment's CLI):
 
@@ -61,9 +61,9 @@ drwxrwxrwx 2 root root 6 Sep  9 18:13 store08
 drwxrwxrwx 2 root root 6 Sep  9 18:13 store09
 ~~~
 
-We will use four of these directories (store01-store04), with each of these individual directories associated to a different PV, allowing us to run four VMs, each connected to specifically tailored NFS-backed storage location. We created the remaining storage directories as additional locations for you to test and experiment with.
+We will use four of these directories (store01-store04), with each of these individual directories associated to a different PV, allowing us to run four VMs, each connected to specifically tailored NFS-backed storage location. We created the remaining storage directories (store00, store05-store09) as additional locations for you to test and experiment with. The "ocp" directory is configured for the **managed-nfs-storage** storage class we saw earlier.
 
-When creating the PV's we need to tell OpenShift what IP address the NFS server is on.
+When creating NFS-based PV's, we need to tell OpenShift what IP address the NFS server is on.
 
 **Be sure you know and use the address from your setup for the lab steps below. DO NOT CUT AND PASTE THEM WITHOUT CHANGING THE IP TO THE VALUE FOR YOUR DEPLOYMENT.**
 
@@ -72,9 +72,9 @@ When creating the PV's we need to tell OpenShift what IP address the NFS server 
 ipv4.addresses:                         136.144.55.157/31, 10.67.10.129/31
 ~~~
 
-As explained, the first address is a "public" or "external" (ie not controlled by OpenShift) network. In the example above, you'd use **136.144.55.157** in the PV claims below. 
+As explained, the first address is a "public" or "external" (ie not controlled/software-defined by OpenShift) network. In the example above, you'd use **136.144.55.157** in the PV claims below. 
 
-Ok, with all that clear, let's create our PVs (**LAST WARNING! Remember to substitute the correct IP address and paths for each claim**) - when you create these temporary files, don't forget to edit the file with the correct IP address before applying it:
+Ok, with that covered, let's create our PVs (**LAST WARNING! Remember to substitute the correct IP address and paths for each claim**) - when you create these temporary files, don't forget to edit the file with the correct IP address before applying it:
 
 Return to the web console if you're using it, and then create nfs-pv1:
 
@@ -138,21 +138,21 @@ Check the PV's:
 
 ~~~bash
 $ oc get pv
-NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                                             STORAGECLASS   REASON   AGE
-nfs-pv1                                    10Gi       RWO,RWX        Delete           Available                                                     nfs                     37s
-nfs-pv2                                    10Gi       RWO,RWX        Delete           Available                                                     nfs                     19s
+nfs-pv1                                    10Gi       RWO,RWX        Delete           Available                                                     nfs                            45s
+nfs-pv2                                    10Gi       RWO,RWX        Delete           Available                                                     nfs                            3s
 ~~~
 
+Note that the openshift-image-registry PV is not listed above for brevity.
 
-Now let's create a new NFS-based Peristent Volume Claim (PVC). 
+Next, let's create a new NFS-based Peristent Volume Claim (PVC). 
 
-For this volume claim we will use a special annotation `cdi.kubevirt.io/storage.import.endpoint` which utilises the Kubernetes Containerized Data Importer (CDI). 
+For this volume claim we will use a special annotation `cdi.kubevirt.io/storage.import.endpoint` which utilizes the Kubernetes Containerized Data Importer (CDI). 
 
-> **NOTE**: CDI is a utility to import, upload, and clone virtual machine images for OpenShift Virtualization. The CDI controller watches for this annotation on the PVC and if found it starts a process to import, upload, or clone. When the annotation is detected the `CDI` controller starts a pod which imports the image from that URL. Cloning and uploading follow a similar process. Read more about the Containerised Data Importer [here](https://kubevirt.io/2018/containerized-data-importer.html).
+> **NOTE**: CDI is a utility to import, upload, and clone virtual machine images for OpenShift Virtualization. The CDI controller watches for this annotation on the PVC and if found, it starts a process to import, upload, or clone. When the annotation is detected, the `CDI` controller starts a pod which imports the image from that URL. Cloning and uploading follow a similar process. Read more about the Containerized Data Importer [here](https://kubevirt.io/2018/containerized-data-importer.html).
 
-Basically we are askng OpenShift to create this PVC and use the image in the endpoint to fill it. In this case we are going to use a publically available Centos 8 image at `"https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2"`in the annotation.
+Basically, we are askng OpenShift to create this PVC and use the image in the endpoint to fill it. In this case we are going to use a publically available Centos 8 image at `"https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2"`in the annotation.
 
-In addition to triggering the CDI utility we also specify the storage class we created earlier (`nfs`) which is setting the `kubernetes.io/no-provisioner` type as described. Finally note the `requests` section. We are asking for a 10gb volume size which we ensured were available previously via nfs-pv1 and nfs-pv2.
+In addition to triggering the CDI utility, we also specify the storage class we created earlier (`nfs`) which is setting the `kubernetes.io/no-provisioner` type as described. Finally, note the `requests` section. We are asking for a 10gb volume size which we ensured to be available via the PVs nfs-pv1 and nfs-pv2.
 
 OK, let's create the PVC with all this included!
 
@@ -220,18 +220,16 @@ I0721 02:05:02.280048       1 data-processor.go:205] New phase: Complete
 I0721 02:05:02.280128       1 importer.go:160] Import complete
 ~~~
 
-If you're quick, you can view the structure of the importer pod in another window to get some of the configuration it's using. Utilizing the lb/bastion system as a second CLI session helps for this type of usuage:
+If you're quick, you can view the structure of the importer pod in another window to gain insight on some of the configuration parameters in use. Utilizing the lb/bastion system as a second CLI session helps for this type of analysis:
 
 ~~~bash
-$ oc describe pod $(oc get pods | awk '/importer/ {print $1;}')
 Name:         importer-centos8-nfs
 Namespace:    default
 Priority:     0
-Node:         ocp-9pv98-worker-pj2dn/10.0.0.38
-Start Time:   Mon, 20 Jul 2020 21:58:18 -0400
+Node:         worker-1.lab01.redhatpartnertech.net/136.144.55.205
+Start Time:   Thu, 10 Sep 2020 03:55:53 +0000
 Labels:       app=containerized-data-importer
               cdi.kubevirt.io=importer
-              cdi.kubevirt.io/storage.import.importPvcName=centos8-nfs
               prometheus.cdi.kubevirt.io=
 (...)
     Environment:
@@ -239,11 +237,12 @@ Labels:       app=containerized-data-importer
       IMPORTER_ENDPOINT:     https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2
       IMPORTER_CONTENTTYPE:  kubevirt
       IMPORTER_IMAGE_SIZE:   10Gi
-      OWNER_UID:             31824304-0176-499c-8a28-ac663ae7a3ee
+      OWNER_UID:             4fca87cb-04df-45bc-95e2-3e85ee08a97f
       INSECURE_TLS:          false
+      IMPORTER_DISK_ID:
     Mounts:
       /data from cdi-data-vol (rw)
-      /var/run/secrets/kubernetes.io/serviceaccount from default-token-bxr5x (ro)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-6s4jd (ro)
 (...)
 Volumes:
   cdi-data-vol:
@@ -260,7 +259,7 @@ Once this process has completed you'll notice that your PVC is ready to use:
 ~~~bash
 $ oc get pvc
 NAME          STATUS   VOLUME    CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-centos8-nfs   Bound    nfs-pv1   10Gi       RWO,RWX        nfs            7m4s
+centos8-nfs   Bound    nfs-pv2   10Gi       RWO,RWX        nfs            7m
 ~~~
 
 > **NOTE**: In your environment it may be bound to `nfs-pv1` or `nfs-pv2` - we simply created two earlier for convenience, so don't worry if your output is not exactly the same here. The important part is that it's showing as `Bound`.
@@ -270,15 +269,15 @@ This same configuration should be reflected when asking OpenShift for a list of 
 ~~~bash
 $ oc get pvc
 NAME          STATUS   VOLUME    CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-centos8-nfs   Bound    nfs-pv1   10Gi       RWO,RWX        nfs            32s
+centos8-nfs   Bound    nfs-pv2   10Gi       RWO,RWX        nfs            8m
 
 $ oc get pv
-NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                                             STORAGECLASS   REASON   AGE
-nfs-pv1                                    10Gi       RWO,RWX        Delete           Bound       default/centos8-nfs                               nfs                     109s
-nfs-pv2                                    10Gi       RWO,RWX        Delete           Available                                                     nfs                     91s
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                                             STORAGECLASS          REASON   AGE
+nfs-pv1                                    10Gi       RWO,RWX        Delete           Available                                                     nfs                            25m
+nfs-pv2                                    10Gi       RWO,RWX        Delete           Bound       default/centos8-nfs                               nfs                            24m
 ~~~
 
-Recall that when we setup the `PV` resources we specified the location and path of the NFS server on that bastion that we wanted to utilise:
+Recall that when we setup the `PV` resources we specified the location and path of the NFS server on that bastion that we wanted to utilize:
 
 ~~~basic
   nfs:
@@ -286,32 +285,32 @@ Recall that when we setup the `PV` resources we specified the location and path 
     server: 136.144.55.157
 ~~~
 
-If we have a look on our NFS server (ie the lb/bastion host) we can make sure that it's using this correctly
+If we have a look on our NFS server (ie. the lb/bastion host) we can make sure that it's using this correctly
 
 > **NOTE**: In your environment, if your image was 'pv1' rather than 'pv2', adjust the commands to match your setup (check both /mnt/nfs/store01 and /mnt/nfs/store02). 
 
 ~~~bash
-[root@lb-0 ~]$ ls -l /mnt/nfs/store01/
-total 387092
--rw-r--r--. 1 root root 10737418240 Jul 23 23:32 disk.img
+[root@lb-0 ~]$ ls -l /mnt/nfs/store02/
+total 2256116
+-rw-r--r-- 1 root root 10737418240 Sep 10 04:12 disk.img
 
-[root@lb-0 ~]$ sudo qemu-img info /mnt/nfs/store01/disk.img
-image: /mnt/nfs/store01/disk.img
+[root@lb-0 ~]$ qemu-img info /mnt/nfs/store02/disk.img
+image: /mnt/nfs/store02/disk.img
 file format: raw
 virtual size: 10G (10737418240 bytes)
-disk size: 427M
+disk size: 2.2G
 
-[root@lb-0 ~]$ sudo file /mnt/nfs/store01/disk.img
-/mnt/nfs/store01/disk.img: DOS/MBR boot sector
+[root@lb-0 ~]$ file /mnt/nfs/store02/disk.img
+/mnt/nfs/store02/disk.img: DOS/MBR boot sector
 ~~~
 
 We'll use this NFS-based Centos8 image when we provision a virtual machine in a future step.
 
 ## Hostpath Storage
 
-Now let's create a second storage type based on `hostpath` storage. We'll follow a similar approach to setting this up, but we won't be using shared storage, so all of the data that we create on hostpath type volumes is essentially ephemeral, and resides on the local disk of the hypervisors (ie the OpenShift workers) themselves. As we're not using a pre-configured shared storage pool for this we need to ask OpenShift's `MachineConfigOperator` to do some work for us directly on our worker nodes.
+Now let's create a second storage type based on `hostpath` storage. We'll follow a similar approach to setting this up, but we won't be using shared storage, so all of the data that we create on hostpath type volumes is essentially ephemeral, and resides on the local storage of the hypervisors (ie the OpenShift worker nodes) themselves. As we're not using a pre-configured shared storage pool for this, we need to utilize OpenShift's `MachineConfigOperator` to do some work for us directly on our worker nodes.
 
-Run the following in the terminal window - it will generate a new `MachineConfig` that the cluster will enact, recognising that we only match on the worker nodes (`machineconfiguration.openshift.io/role: worker`):
+Run the following in the terminal window - it will generate a new `MachineConfig` that the cluster will enact, recognizing that we match on the worker nodes only (`machineconfiguration.openshift.io/role: worker`):
 
 ~~~bash
 $ cat << EOF | oc apply -f -
@@ -347,34 +346,35 @@ EOF
 machineconfig.machineconfiguration.openshift.io/50-set-selinux-for-hostpath-provisioner-worker created
 ~~~
 
-This deploys a new `systemd` unit file on the worker nodes to create a new directory at `/var/hpvolumes` and relabels it with the correct SELinux contexts at boot-time, ensuring that OpenShift can leverage that directory for local storage. We do this via a `MachineConfig` as the CoreOS machine is immutable. You should first start to witness OpenShift starting to drain the worker nodes and disable scheduling on them so the nodes can be rebooted safely:
+This deploys a new `systemd` unit file on the worker nodes to create a new directory at `/var/hpvolumes` and relabels it with the correct SELinux contexts at boot-time, ensuring that OpenShift can leverage that directory for local storage. We do this via a `MachineConfig` as RHEL CoreOS is an immutable operating system. You should see OpenShift drain each worker node incrementally, disabling scheduling so the node can be rebooted safely and then brought back to ready status in the cluster:
 
 ~~~bash
 $ oc get nodes
-NAME                                STATUS                     ROLES    AGE    VERSION
-cluster-august-lhrd5-master-0       Ready                      master   153m   v1.18.3+b74c5ed
-cluster-august-lhrd5-master-1       Ready                      master   153m   v1.18.3+b74c5ed
-cluster-august-lhrd5-master-2       Ready                      master   153m   v1.18.3+b74c5ed
-cluster-august-lhrd5-worker-6w624   Ready                      worker   134m   v1.18.3+b74c5ed
-cluster-august-lhrd5-worker-mh52l   Ready,SchedulingDisabled   worker   134m   v1.18.3+b74c5ed
+NAME                                   STATUS                     ROLES    AGE   VERSION
+master-0.lab01.redhatpartnertech.net   Ready                      master   8h    v1.18.3+6c42de8
+master-1.lab01.redhatpartnertech.net   Ready                      master   8h    v1.18.3+6c42de8
+master-2.lab01.redhatpartnertech.net   Ready                      master   8h    v1.18.3+6c42de8
+worker-0.lab01.redhatpartnertech.net   Ready,SchedulingDisabled   worker   8h    v1.18.3+6c42de8
+worker-1.lab01.redhatpartnertech.net   Ready                      worker   8h    v1.18.3+6c42de8
+worker-2.lab01.redhatpartnertech.net   Ready                      worker   8h    v1.18.3+6c42de8
 ~~~
 
-> **NOTE**: This will take a few minutes (allow at least 15 mins) to reflect on the cluster, and causes the worker nodes to reboot. You'll witness a disruption on the lab guide functionality where you will see the consoles hang and/or display a "Closed" image. In some cases we have needed to refresh the entire browser.
+> **NOTE**: This will take a few minutes (allow at least 15 mins) to reflect on the cluster, and causes the worker nodes to reboot. You'll witness a disruption on the lab guide functionality where you will see the console hang and/or display a "Closed" image. In some cases we have needed to refresh the entire browser.
 
 <img src="img/disconnected-terminal.png" width="80%"/>
 
-It should automatically reconnect but if it doesn't, you can try reloading the terminal by clicking the three bars in the top right hand corner:
+The browser should automatically reconnect, but if it doesn't, you can try reloading the terminal by clicking the three bars in the top right hand corner:
 
 <img src="img/reload-terminal.png" width="80%"/>
 
-When you're able to issue commands again, make sure you're in the correct namespace again:
+When you're able to issue commands again, make sure to continue to use the correct namespace:
 
 ~~~bash
 $ oc project default
 Now using project "default" on server "https://172.30.0.1:443".
 ~~~
 
-Before proceeding you need to **wait for the following command to return `True`** as it indicates when the `MachineConfigPool`'s worker has been updated with the latest `MachineConfig` requested (again, this will take at least 10 minutes in RHPDS): 
+Before proceeding you need to **wait for the following command to return `True`** as it indicates when the `MachineConfigPool`'s worker has been updated with the latest `MachineConfig` requested (again, this will take approximately 15 minutes): 
 
 ~~~bash
 $ oc get machineconfigpool worker -o=jsonpath="{.status.conditions[?(@.type=='Updated')].status}{\"\n\"}"

@@ -4,7 +4,7 @@ We are going to launch this VM from a fairly large piece of YAML. Of course, thi
 
 Let's review what this is going to do.
 
-To begin with let's use the NFS volumes we created earlier to launch some VMs. We are going to create a machine called `centos8-server-nfs`. As you'll recall we have created a PVC called `centos8-nfs` that was created using the CDI utility with a Centos 8 base image. To connect the machine to the network we will utilise the `NetworkAttachmentDefinition` we created for the underlying host's secondary NIC. This is the `tuning-bridge-fixed` interface which refers to that bridge created previously. It's also important to remember that OpenShift 4.x uses Multus as it's default networking CNI so we also ensure Multus knows about this `NetworkAttachmentDefinition`. 
+To begin with let's use the NFS volumes we created earlier to launch some VMs. We are going to create a machine called `centos8-server-nfs`. As you'll recall we have created a PVC called `centos8-nfs` that was created using the CDI utility with a Centos 8 base image. To connect the machine to the network we will utilize the `NetworkAttachmentDefinition` we created for the underlying host's secondary NIC. This is the `tuning-bridge-fixed` interface which refers to that bridge created previously. It's also important to remember that OpenShift 4.x uses Multus as it's default networking CNI so we also ensure Multus knows about this `NetworkAttachmentDefinition`. 
 
 Additionally we have set the evictionStrategy to LiveMigrate so that any request to move the instance will use this method. We will explore this in more depth in a later lab, however note the `ACCESS MODES` set for this machine's PVC: 
 
@@ -147,7 +147,7 @@ NAME                 AGE    PHASE     IP                 NODENAME
 centos8-server-nfs   117s   Running   192.168.47.5/24   cluster-august-lhrd5-worker-6w624
 ~~~
 
-> **NOTE**: It may take a minute or two for the IP address to appear as it utilise the qemu-guest-agent which needs time to start up.
+> **NOTE**: It may take a minute or two for the IP address to appear as it utilize the qemu-guest-agent which needs time to start up.
 
 OpenShift spawns a pod that manages the provisioning of the virtual machine in our environment, known as the `virt-launcher`:
 
@@ -464,7 +464,7 @@ centos8-server-nfs        8m50s   Running   192.168.47.5/24   cluster-august-lhr
 
 ~~~
 
-And looking deeper we can see the hostpath claim we explored earlier being utilised, note the `Mounts` section for where, inside the pod, the `rhel8-hostpath` PVC is attached, and then below the PVC name:
+And looking deeper we can see the hostpath claim we explored earlier being utilized, note the `Mounts` section for where, inside the pod, the `rhel8-hostpath` PVC is attached, and then below the PVC name:
 
 ~~~bash
 $ oc describe pod/virt-launcher-centos8-server-hostpath-zpgwr

@@ -4,7 +4,7 @@ Welcome to the OpenShift Virtualization self-paced lab on Packet Cloud. We've pu
 
 **OpenShift Virtualization** is now the official *product name* for the Container-native Virtualization operator for OpenShift. This has more commonly been referred to as "**CNV**" and is the downstream offering for the upstream [Kubevirt project](https://kubevirt.io/). While some aspects of this lab will still have references to "CNV" any reference to "CNV", "Container-native Virtualization" and "OpenShift Virtualization" can be used interchangeably.
 
-In these labs you'll utilise a real, baremetal UPI OpenShift 4.5 deployment on Packet's baremetal cloud. This will help get you up to speed with the concepts of OpenShift Virtualization.
+In these labs you'll utilize a real, baremetal UPI OpenShift 4.5 deployment on Packet's baremetal cloud. This will help get you up to speed with the concepts of OpenShift Virtualization.
 
 This is the self-hosted lab guide that will run you through the following:
 

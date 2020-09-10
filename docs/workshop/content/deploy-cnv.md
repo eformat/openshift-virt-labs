@@ -1,6 +1,6 @@
 **OpenShift Virtualization** is available as both upstream (**KubeVirt**) and downstream releases. As of this writing the downstream release is version 2.4 and is available from the OperatorHub. **This version is fully supported by Red Hat.** 
 
-The mechanism for installation is to utilise the operator model and deploy via the OpenShift Operator Hub (Marketplace) in the web-console. It's entirely possible to deploy via the CLI should you wish to do so, but we're not documenting that mechanism here.
+The mechanism for installation is to utilize the operator model and deploy via the OpenShift Operator Hub (Marketplace) in the web-console. It's entirely possible to deploy via the CLI should you wish to do so, but we're not documenting that mechanism here.
 
 Use the **Console** portion of the lab for the next steps. As a reminder, the access is via the buttons at the top. Any CLI commands should be executed by clicking back to the **Terminal** via the same buttons.
 
@@ -214,7 +214,7 @@ status:
 
 ~~~
 
-Here you can see the current state of the node (some of the output has been cut), the interfaces attached, and their physical/logical addresses. In a later section we're going to be modifying the network node state by applying a new configuration to allow nodes to utilise another interface to provide pod networking via a **bridge**. We will do this via a `NodeNetworkConfigurationEnactment` or `nnce` in short:
+Here you can see the current state of the node (some of the output has been cut), the interfaces attached, and their physical/logical addresses. In a later section we're going to be modifying the network node state by applying a new configuration to allow nodes to utilize another interface to provide pod networking via a **bridge**. We will do this via a `NodeNetworkConfigurationEnactment` or `nnce` in short:
 
 ~~~bash
 $ oc get nnce -n openshift-cnv
