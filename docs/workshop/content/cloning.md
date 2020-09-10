@@ -107,7 +107,7 @@ However we are going to run quite a bit more via cloud-init. This time we will d
 * install podman
 * set up an ngnix podman container to allow us to access a simple web page on the host
 
-**Note**> You can find this yaml outside the lab environment at [https://github.com/RHFieldProductManagement/openshift-virt-labs/tree/rhpds/configs/centos7-clone-nfs.yaml](https://github.com/RHFieldProductManagement/openshift-virt-labs/tree/rhpds/configs/centos7-clone-nfs.yaml)
+**Note**> You can find this yaml outside the lab environment at [https://github.com/heatmiser/openshift-virt-labs/tree/packet/configs/centos7-clone-nfs.yaml](https://github.com/heatmiser/openshift-virt-labs/tree/packet/configs/centos7-clone-nfs.yaml)
 
 ~~~bash
 $ cat << EOF | oc apply -f -
@@ -376,7 +376,7 @@ centos8-nfs         Bound    nfs-pv1                                    10Gi    
 
 Finally we can start up a new VM using the cloned PVC. A few things to note before we do this. We are going to name this VM `centos7-clone-dv` and it will use the `centos7-clone-dv` PVC we created in the previous steps which was cloned from the `centos7-clonenfs` machine. We are also, like our other VMs, setting the MAC address to a specific address. We are doing this to work within some limitations within RHPDS. 
 
-**Note>** You can find an external version of this yaml at [https://github.com/RHFieldProductManagement/openshift-virt-labs/tree/rhpds/configs/centos7-clone-dv.yaml](https://github.com/RHFieldProductManagement/openshift-virt-labs/tree/rhpds/configs/centos7-clone-dv.yaml)
+**Note>** You can find an external version of this yaml at [https://github.com/heatmiser/openshift-virt-labs/tree/packet/configs/centos7-clone-dv.yaml](https://github.com/heatmiser/openshift-virt-labs/tree/packet/configs/centos7-clone-dv.yaml)
 
 First create the new VM:
 

@@ -33,7 +33,7 @@ volumes:
 
 So let's go ahead and create a `VirtualMachine` using our existing Centos 7 image via a PVC we created previously. *Look closely, we are using our cloned PVC so we get the benefits of the installed **NGINX** server and ssh configuration!*
 
-You can find an external version of this yaml at [https://github.com/RHFieldProductManagement/openshift-virt-labs/tree/rhpds/configs/centos7-masq.yaml](https://github.com/RHFieldProductManagement/openshift-virt-labs/tree/rhpds/configs/centos7-masq.yaml)
+You can find an external version of this yaml at [https://github.com/heatmiser/openshift-virt-labs/tree/packet/configs/centos7-masq.yaml](https://github.com/heatmiser/openshift-virt-labs/tree/packet/configs/centos7-masq.yaml)
 
 ~~~bash
 $ cat << EOF | oc apply -f -

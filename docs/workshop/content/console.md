@@ -224,7 +224,7 @@ Choose **Next** to move to the "**Advanced**" section.
 
 Here we will set our cloud-init config to run. Choose the "**Custom Script**" radio button and enter the cloud-init details into the box.
 
-To view this config outside of the lab environment go to [https://github.com/RHFieldProductManagement/openshift-virt-labs/tree/rhpds/configs/centos7-ui-vm-cloud-init.txt](https://github.com/RHFieldProductManagement/openshift-virt-labs/tree/rhpds/configs/centos7-ui-vm-cloud-init.txt)
+To view this config outside of the lab environment go to [https://github.com/heatmiser/openshift-virt-labs/tree/packet/configs/centos7-ui-vm-cloud-init.txt](https://github.com/heatmiser/openshift-virt-labs/tree/packet/configs/centos7-ui-vm-cloud-init.txt)
 
 ~~~bash
 #cloud-config
