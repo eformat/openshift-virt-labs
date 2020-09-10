@@ -8,7 +8,7 @@ This has the added benefit of allowing virtual machines to leverage all of the K
 
 Pod networking is also referred to as "masquerade" mode in OpenShift Virtualization, and it can be used to hide a virtual machine’s outgoing traffic behind the pod IP address. Masquerade mode uses Network Address Translation (NAT) to connect virtual machines to the Pod network backend through a Linux bridge. Masquerade mode is the recommended binding method for VM's that need to use (or have access to) the default pod network.
 
-Utilising pod networking rather than the worker's requires the interface to connect using the `masquerade: {}` method and for IPv4 addresses to be allocated via DHCP. We are going to test this with one of the same Centos images (imported into a PVC) which we used in the previous labs. 
+Utilizing pod networking rather than the worker's requires the interface to connect using the `masquerade: {}` method and for IPv4 addresses to be allocated via DHCP. We are going to test this with one of the same Centos images (imported into a PVC) which we used in the previous labs. 
 
 In our virtual machine configuration file we do the following:
  

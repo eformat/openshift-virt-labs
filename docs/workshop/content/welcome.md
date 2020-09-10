@@ -15,7 +15,7 @@ This is the self-hosted lab guide that will run you through the following:
 * **Deploying some Test Workloads**
 * **Cloning Workloads**
 * **Performing Live Migrations and Node Maintenance**
-* **Utilising network masquerading on pod networking for VM's**
+* **Utilizing network masquerading on pod networking for VM's**
 
 ## Lab Setup
 

@@ -115,7 +115,7 @@ spec:
 
 And then select the "**Create**" option.
 
-You now have an unbound volume ready for a PVC utilising CDI. 
+You now have an unbound volume ready for a PVC utilizing CDI. 
 
 Choose "**Storage**" and then "**Persistent Volume Claims**" and select "**Create Persistent Volume Claim**" from the upper right:
 

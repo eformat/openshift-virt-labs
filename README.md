@@ -34,7 +34,7 @@ The lab runs you through the following OpenShift Virtualization tasks:
 * **[Deploying Test Workloads](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/deploy-workloads.md)**
 * **[Cloning Workloads](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/cloning.md)**
 * **[Performing Live Migrations and Node Maintenance](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/live-migration.md)**
-* **[Utilising pod networking for VM's](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/masquerade.md)**
+* **[Utilizing pod networking for VM's](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/masquerade.md)**
 * **[Using the OpenShift Web Console with OpenShift Virtualization](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/console.md)** 
 
 As mentioned above, the entire environment is deployed within infrastructure hosted by Packet Cloud. This means you can easily deploy the lab, follow some simple setup instructions, and you will have your own bare-metal OpenShift cluster to work on, with full admin access. 
