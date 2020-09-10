@@ -187,7 +187,7 @@ NAME                   READY   STATUS              RESTARTS   AGE
 importer-centos8-nfs     0/1     ContainerCreating   0          1s
 ~~~
 
-Watch the logs and you can see the process. The image is imported into the PV which is sitting on our NFS share. Watch the logs and wait a few minutes for the import to register Complete:
+Watch the logs (-f for "follow" in the next command below) and you can see the process. The image is imported into the PV which is sitting on our NFS share. Wait a few minutes for the import to register complete:
 
 ~~~bash
 $ oc logs importer-centos8-nfs -f
@@ -403,9 +403,10 @@ When you've applied this config, an additional pod will be spawned on each of th
 
 ~~~bash
 $ oc get pods -n openshift-cnv | grep hostpath
-hostpath-provisioner-dzgjz                         1/1     Running           0          12s
-hostpath-provisioner-kv8qw                         1/1     Running           0          12s
-hostpath-provisioner-operator-8f985f9-sln69        1/1     Running           0          6m34s
+hostpath-provisioner-7xct8                            1/1     Running   0          23s
+hostpath-provisioner-gn69m                            1/1     Running   0          23s
+hostpath-provisioner-hc85r                            1/1     Running   0          23s
+hostpath-provisioner-operator-69b86dc7d7-27mkc        1/1     Running   0          17m
 ~~~
 
 We're now ready to configure a new `StorageClass` for the HostPath based storage:
@@ -424,7 +425,7 @@ EOF
 storageclass.storage.k8s.io/hostpath-provisioner created
 ~~~
 
-You'll note that this storage class **does** have a provisioner (as opposed to the previous use of `kubernetes.io/no-provisioner`), and therefore it can create persistent volumes dynamically when a claim is submitted by the user, let's validate that by creating a new hostpath based PVC and checking that it creates the associated PV:
+You'll note that this storage class **does** have a provisioner (as opposed to the previous use of `kubernetes.io/no-provisioner`), and therefore it can create persistent volumes dynamically when a claim is submitted by the user. Let's validate that by creating a new hostpath based PVC and checking that it creates the associated PV:
 
 
 ~~~bash
@@ -450,7 +451,7 @@ EOF
 persistentvolumeclaim/centos8-hostpath created
 ~~~
 
-We use CDI to ensure the volume we're requesting uses the same Centos8 image we used before:
+Again, OpenShift uses CDI to populate the persistent volume claim we are requesting, pointing to the same Centos8 image we used previously:
 
 ~~~bash
 $ oc get pods
@@ -490,21 +491,21 @@ Allow the import to finish and check the status of the PV's:
 ~~~bash
 $ oc get pv
 NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                                             STORAGECLASS           REASON   AGE
-nfs-pv1                                    10Gi       RWO,RWX        Delete           Bound       default/centos8-nfs                               nfs                             16m
-nfs-pv2                                    10Gi       RWO,RWX        Delete           Available                                                     nfs                             16m
-pvc-e2f75a46-7402-4bc6-ac30-acce7acd9feb   29Gi       RWO            Delete           Bound       default/centos8-hostpath                          hostpath-provisioner            2m45s
+nfs-pv1                                    10Gi       RWO,RWX        Delete           Available                                                     nfs                             95m
+nfs-pv2                                    10Gi       RWO,RWX        Delete           Bound       default/centos8-nfs                               nfs                             95m
+pvc-9462894f-cbf5-455f-8465-709ec6d6f428   222Gi      RWO            Delete           Bound       default/centos8-hostpath                          hostpath-provisioner            13m
 ~~~
 
-> **NOTE**: The capacity displayed above lists the available space on the host, not the actual size of the persistent volume when being used.
+> **NOTE**: The capacity displayed above (222Gi) lists the available space on the host, not the actual size of the persistent volume when being used.
 
 Let's look more closely at the PV's. Describe the new hostpath PV (noting that you'll need to adapt for the `uuid` in your environment):
 
 ~~~bash
 $ oc describe pv/pvc-e2f75a46-7402-4bc6-ac30-acce7acd9feb
-Name:              pvc-e2f75a46-7402-4bc6-ac30-acce7acd9feb
+Name:              pvc-9462894f-cbf5-455f-8465-709ec6d6f428
 Labels:            <none>
 Annotations:       hostPathProvisionerIdentity: kubevirt.io/hostpath-provisioner
-                   kubevirt.io/provisionOnNode: cluster-august-lhrd5-worker-6w624
+                   kubevirt.io/provisionOnNode: worker-2.lab01.redhatpartnertech.net
                    pv.kubernetes.io/provisioned-by: kubevirt.io/hostpath-provisioner
 Finalizers:        [kubernetes.io/pv-protection]
 StorageClass:      hostpath-provisioner
@@ -513,19 +514,19 @@ Claim:             default/centos8-hostpath
 Reclaim Policy:    Delete
 Access Modes:      RWO
 VolumeMode:        Filesystem
-Capacity:          29Gi
-Node Affinity:
-  Required Terms:
-    Term 0:        kubernetes.io/hostname in [cluster-august-lhrd5-worker-6w624]
-Message:
+Capacity:          222Gi
+Node Affinity:     
+  Required Terms:  
+    Term 0:        kubernetes.io/hostname in [worker-2.lab01.redhatpartnertech.net]
+Message:           
 Source:
     Type:          HostPath (bare host directory volume)
-    Path:          /var/hpvolumes/pvc-e2f75a46-7402-4bc6-ac30-acce7acd9feb
-    HostPathType:
+    Path:          /var/hpvolumes/pvc-9462894f-cbf5-455f-8465-709ec6d6f428
+    HostPathType:  
 Events:            <none>
 ~~~
 
-There's a few important details here worth noting, namely the `kubevirt.io/provisionOnNode` annotation, and the path of the volume on that node. In the example above you can see that the volume was provisioned on *cluster-august-lhrd5-worker-6w624*, one our two worker nodes. 
+There's a few important details here worth noting, namely the `kubevirt.io/provisionOnNode` annotation, and the path of the volume on that node. In the example above you can see that the volume was provisioned on *worker-2.lab01.redhatpartnertech.net*, one our three worker nodes. 
 
 Let's look more closely to verify that this truly has been created for us on the designated worker.
 
@@ -534,10 +535,10 @@ Let's look more closely to verify that this truly has been created for us on the
 Create a debug pod and session on the node listed above:
 
 ~~~bash
-$ oc debug node/cluster-august-lhrd5-worker-6w624
-Starting pod/cluster-august-lhrd5-worker-6w624-debug ...
+$ oc debug node/worker-2.lab01.redhatpartnertech.net
+Starting pod/worker-2lab01redhatpartnertechnet-debug ...
 To use host binaries, run `chroot /host`
-Pod IP: 10.0.0.21
+Pod IP: 136.144.55.63
 If you don't see a command prompt, try pressing enter.
 sh-4.2# chroot /host
 sh-4.4#
@@ -546,11 +547,11 @@ sh-4.4#
 And review the PVC created in the /var/hpvolumes directory:
 
 ~~~bash
-sh-4.4# ls -l /var/hpvolumes/pvc-e2f75a46-7402-4bc6-ac30-acce7acd9feb/disk.img
--rw-r--r--. 1 root root 10737418240 Jul 24 03:46 /var/hpvolumes/pvc-e2f75a46-7402-4bc6-ac30-acce7acd9feb/disk.img
+sh-4.4# ls -l /var/hpvolumes/pvc-9462894f-cbf5-455f-8465-709ec6d6f428/disk.img
+-rw-r--r--. 1 root root 10737418240 Sep 10 05:25 /var/hpvolumes/pvc-9462894f-cbf5-455f-8465-709ec6d6f428/disk.img
 
-sh-4.4# file /var/hpvolumes/pvc-e2f75a46-7402-4bc6-ac30-acce7acd9feb/disk.img
-/var/hpvolumes/pvc-e2f75a46-7402-4bc6-ac30-acce7acd9feb/disk.img: DOS/MBR boot sector
+sh-4.4# file /var/hpvolumes/pvc-9462894f-cbf5-455f-8465-709ec6d6f428/disk.img
+/var/hpvolumes/pvc-9462894f-cbf5-455f-8465-709ec6d6f428/disk.img: DOS/MBR boot sector
 ~~~
 
 And don't forget to exit and terminate the debug pod:
@@ -562,4 +563,4 @@ Removing debug pod ...
 
 ~~~
 
-Make sure that you've executed the two `exit` commands above - we need to make sure that you're back to the right shell before continuing, and aren't still inside of the debug pod.
+Make sure that you've executed the two `exit` commands above - we need to make sure that you're back to the correct shell before continuing, and no longer inside of the debug pod.
