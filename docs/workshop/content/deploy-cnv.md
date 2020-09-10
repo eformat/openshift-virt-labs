@@ -1,4 +1,4 @@
-O**penShift Virtualization** is available as both upstream (**KubeVirt**) and downstream releases. As of this writing the downstream release is version 2.4 and is available from the OperatorHub. **This version is fully supported by Red Hat.** 
+**OpenShift Virtualization** is available as both upstream (**KubeVirt**) and downstream releases. As of this writing the downstream release is version 2.4 and is available from the OperatorHub. **This version is fully supported by Red Hat.** 
 
 The mechanism for installation is to utilise the operator model and deploy via the OpenShift Operator Hub (Marketplace) in the web-console. It's entirely possible to deploy via the CLI should you wish to do so, but we're not documenting that mechanism here.
 
@@ -8,29 +8,33 @@ Use the **Console** portion of the lab for the next steps. As a reminder, the ac
 
 Next, navigate to the top-level '**Operators**' menu entry, and select '**OperatorHub**'. This lists all of the available operators that you can install from the Red Hat Marketplace. Simply start typing '**virtualization**' in the search box and you should see an entry called "OpenShift Virtualization". 
 
-<img  border="1" src="img/ocp-virt-operator-panel-2.png"/>
+<img  border="1" src="img/ocp-virt-operator-panel-3.png"/>
 
 Select it and you'll see a window that looks like the following:
 
-<img  border="1" src="img/ocp-virt-operator-install-2.png"/>
+<img  border="1" src="img/ocp-virt-operator-install-3.png"/>
 
 Click the 'Install' button. This takes you to a second window where you can set some details about the installation. Spend some time to review it, but you can leave the defaults as they'll automatically select the latest version of OpenShift Virtualization and will allow the software to be installed automatically:
 
-<img  border="1" src="img/ocp-virt-operator-install-details.png"/>
+<img  border="1" src="img/ocp-virt-operator-install-details-2.png"/>
 
 Make sure that the namespace it will be installed to is "**openshift-cnv**" - it should be the default entry, but make sure. When you're ready, press the **'Install'** button. The install process progress will be displayed:
 
 <img  border="1" src="img/ocp-virt-operatore-install-progress.png"/>
 
-Wait for the install to complete successfully; it may take a few minutes:
+Wait for the install to complete successfully; it may take a few minutes. Once Status reaches Succeeded, you can proceed:
 
 <img  border="1" src="img/ocp-virt-operatore-install-success.png"/>
 
-Next we need to deploy the rest of the OpenShift Virtualization components that this operator provides. Select the "**OpenShift Virtualization**" link under the '**Name**' column, and you'll be presented with the following:
+Next we need to deploy the rest of the OpenShift Virtualization components that this operator provides. Make sure to be on the "**Installed Operators** pane, then select the "**OpenShift Virtualization**" link under the '**Name**' column:
+
+<img  border="1" src="img/ocp-virt-operator-deploy.png"/>
+
+...and you will be presented with the following:
 
 <img  border="1" src="img/ocp-virt-hco-1.png"/>
 
-From here, select '**Create Instance**' on the '**CNV Operator Deployment**' button. You'll be presented with the '**Create HyperConverged Cluster**' screen. This will deploy all of the necessary components that are required to support OpenShift Virtualization. Click the '**Create**' button.
+From here, select '**+ Create Instance**' on the '**CNV Operator Deployment**' mini pane. You'll be presented with the '**Create HyperConverged Cluster**' screen. This will deploy all of the necessary components that are required to support OpenShift Virtualization. Just go with the defaults and click the '**Create**' button.
 
 <img  border="1" src="img/ocp-virt-hco-2.png"/>
 
@@ -49,7 +53,7 @@ $ watch -n2 'oc get pods -n openshift-cnv'
 (...)
 ~~~
 
-> **NOTE**: It may take a few minutes for the pods to start up. Press **Ctrl+C** to exit the watch command.
+> **NOTE**: Press **Ctrl+C** when ready to exit the watch command.
 
 During this process you will see a lot of pods create and terminate, which will look something like the following depending on when you view it; it's always changing:
 
@@ -62,7 +66,7 @@ You will know the process is complete when you can return to the terminal and se
 ~~~bash
 $ oc get csv -n openshift-cnv
 NAME                                      DISPLAY                    VERSION   REPLACES   PHASE
-kubevirt-hyperconverged-operator.v2.4.0   OpenShift Virtualization   2.4.0                Succeeded
+kubevirt-hyperconverged-operator.v2.4.1   OpenShift Virtualization   2.4.1                Succeeded
 ~~~
 
 If you do not see `Succeeded` in the `PHASE` column then the deployment may still be progressing, or has failed. You will not be able to proceed until the installation has been successful. Once the `PHASE` changes to `Succeeded` you can validate that the required resources and the additional components have been deployed across the nodes. First let's check the pods deployed in the `openshift-cnv` namespace:
@@ -111,32 +115,36 @@ There's also a few custom resources that get defined too, for example the `NodeN
 
 ~~~bash
 $ oc get nns -A
-NAME                                AGE
-cluster-august-lhrd5-master-0       8m53s
-cluster-august-lhrd5-master-1       9m3s
-cluster-august-lhrd5-master-2       8m58s
-cluster-august-lhrd5-worker-6w624   9m1s
-cluster-august-lhrd5-worker-mh52l   8m53s
+NAME                                   AGE
+master-0.lab01.redhatpartnertech.net   4m16s
+master-1.lab01.redhatpartnertech.net   4m17s
+master-2.lab01.redhatpartnertech.net   4m16s
+worker-0.lab01.redhatpartnertech.net   4m17s
+worker-1.lab01.redhatpartnertech.net   4m17s
+worker-2.lab01.redhatpartnertech.net   4m17s
 ~~~
 
-Dive a little deeper into the config on one of the workers:
+Dive a little deeper into the config on one of the workers (some fields removed for brevity):
 
 ~~~bash
-[~] $ oc get nns/cluster-august-lhrd5-worker-6w624 -o yaml
+[~] $ oc get nns/worker-0.lab01.redhatpartnertech.net -o yaml
 apiVersion: nmstate.io/v1alpha1
 kind: NodeNetworkState
 metadata:
-  creationTimestamp: "2020-07-24T02:47:36Z"
+  creationTimestamp: "2020-09-10T00:04:00Z"
   generation: 1
-  name: cluster-august-lhrd5-worker-6w624
+    manager: kubernetes-nmstate
+    operation: Update
+    time: "2020-09-10T00:09:11Z"
+  name: worker-0.lab01.redhatpartnertech.net
   ownerReferences:
   - apiVersion: v1
     kind: Node
-    name: cluster-august-lhrd5-worker-6w624
-    uid: f49986fe-86bc-484f-ba87-fe220b09892a
-  resourceVersion: "57633"
-  selfLink: /apis/nmstate.io/v1alpha1/nodenetworkstates/cluster-august-lhrd5-worker-6w624
-  uid: 8e9cf029-4523-4ce5-bdd2-35b6093f4e98
+    name: worker-0.lab01.redhatpartnertech.net
+    uid: 1b184f11-6574-46ed-b309-9fe5e4cb628d
+  resourceVersion: "111125"
+  selfLink: /apis/nmstate.io/v1alpha1/nodenetworkstates/worker-0.lab01.redhatpartnertech.net
+  uid: 6a854d88-9aef-4f09-b238-2384d4d6731f
 status:
   currentState:
     dns-resolver:
@@ -145,28 +153,30 @@ status:
         server: []
       running:
         search:
-        - cluster-august.students.osp.opentlc.com
-        - cluster-august.students.osp.opentlc.com
+        - example.local.dc
         server:
-        - 10.0.0.10
-        - 10.0.0.11
-        - 10.0.0.12
-        - 192.168.47.11
-        - 192.168.47.12
-        - 192.168.47.10
+        - 147.75.207.207
+        - 147.75.207.208
+        - 8.8.8.8
+        - 8.8.4.4
     interfaces:
     - ipv4:
         enabled: false
       ipv6:
         enabled: false
+      mac-address: 4e:49:a0:5d:47:45
       mtu: 1450
       name: br0
       state: down
       type: ovs-interface
-    - ipv4:
+    - ethernet:
+        auto-negotiation: false
+        duplex: full
+        speed: 10000
+      ipv4:
         address:
-        - ip: 10.0.0.21
-          prefix-length: 16
+        - ip: 136.144.55.157
+          prefix-length: 31
         auto-dns: true
         auto-gateway: true
         auto-routes: true
@@ -174,7 +184,7 @@ status:
         enabled: true
       ipv6:
         address:
-        - ip: fe80::78d3:ad44:db4e:12e7
+        - ip: fe80::7b63:be82:5fca:fc2f
           prefix-length: 64
         auto-dns: true
         auto-gateway: true
@@ -182,20 +192,26 @@ status:
         autoconf: true
         dhcp: true
         enabled: true
-      mac-address: FA:16:3E:3F:A1:A3
+      mac-address: E4:43:4B:DE:0F:E0
       mtu: 1500
-      name: ens3
+      name: eno1
       state: up
       type: ethernet
-    - ipv4:
+    - ethernet:
+        auto-negotiation: false
+        duplex: full
+        speed: 10000
+      ipv4:
         address:
-        - ip: 192.168.47.21
+        - ip: 192.168.2.104
           prefix-length: 24
         auto-dns: true
         auto-gateway: true
         auto-routes: true
         dhcp: true
         enabled: true
+      ipv6:
+
 ~~~
 
 Here you can see the current state of the node (some of the output has been cut), the interfaces attached, and their physical/logical addresses. In a later section we're going to be modifying the network node state by applying a new configuration to allow nodes to utilise another interface to provide pod networking via a **bridge**. We will do this via a `NodeNetworkConfigurationEnactment` or `nnce` in short:
@@ -214,4 +230,4 @@ When OpenShift Virtualization is deployed it adds additional components to OpenS
 
 <img src="img/ocpvirt-dashboard.png"/>
 
-**Please don't try and create any virtual machines just yet, we'll get to that shortly. We have to set up Storage and Networking first.**
+**Please don't try and create any virtual machines just yet, we'll get to that shortly. First, we need to set up Storage and Networking...**
