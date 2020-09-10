@@ -615,12 +615,12 @@ virtualmachine.kubevirt.io "centos7-clone-nfs" deleted
 ~~~bash
 $ oc get vmi
 NAME                      AGE     PHASE     IP                 NODENAME
-centos7-clone-dv          6m46s   Failed    192.168.47.8/24   cluster-august-lhrd5-worker-6w624
-centos8-server-hostpath   66m     Failed    192.168.47.6/24   cluster-august-lhrd5-worker-6w624
-centos8-server-nfs        73m     Running   192.168.47.5/24   cluster-august-lhrd5-worker-6w624
+centos7-clone-dv          19m     Failed    10.254.4.25        worker-2.lab01.redhatpartnertech.net
+centos8-server-hostpath   3h20m   Failed    192.168.2.108/24   worker-2.lab01.redhatpartnertech.net
+centos8-server-nfs        4h15m   Running   192.168.2.107/24   worker-2.lab01.redhatpartnertech.net
 
 $ oc get vmi
-NAME                 AGE   PHASE     IP                 NODENAME
-centos8-server-nfs   73m   Running   192.168.47.5/24   cluster-august-lhrd5-worker-6w624
+NAME                 AGE     PHASE     IP                 NODENAME
+centos8-server-nfs   4h16m   Running   192.168.2.107/24   worker-2.lab01.redhatpartnertech.net
 ~~~
 
