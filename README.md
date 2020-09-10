@@ -12,13 +12,13 @@ Welcome to our hands-on OpenShift Virtualization lab for Packet Cloud.
 
 # Lab environment
 
-The lab includes a self-hosted OpenShift Virtualization environment and a hands-on self-paced lab guide based on [OpenShift homeroom](https://github.com/openshift-homeroom).
+The lab includes a self-hosted OpenShift Virtualization environment and a hands-on, self-paced lab guide based on [OpenShift homeroom](https://github.com/openshift-homeroom).
 
-The Lab content is presented in three easy to use panes consisting of the following sections: navigation, lab steps, working environment. Adjust sizing to suit!
+The lab content is presented in three easy to use panes consisting of the following sections: navigation, lab steps, working environment. Adjust sizing to suit!
 
 You'll have access to an OpenShift CLI environment as well as the console.
 
-All labs steps are expected to be run from *within* this environment; you do not need to use the bastion's CLI or login to the OpenShift Console directly, however, utilizing the load-balancer node can be useful ofr instances where multiple CLI sessions are desirable.
+All labs steps are expected to be run from *within* this environment; you do not need to use the lb/bastion's CLI or login to the OpenShift Console directly, however, utilizing the load-balancer/bastion node can be useful for instances where multiple CLI sessions are desirable.
 
 
 # Lab content
@@ -37,7 +37,7 @@ The lab runs you through the following OpenShift Virtualization tasks:
 * **[Utilising pod networking for VM's](https://github.com/RHFieldProductManagement/openshift-virt-labs/blob/rhpds/docs/workshop/content/masquerade.md)**
 * **[Using the OpenShift Web Console with OpenShift Virtualization](https://github.com/RHFieldProductManagement/openshift-virt-labs/blob/rhpds/docs/workshop/content/console.md)** 
 
-As mentioned above, the entire environment is deployed within infrastructure hosted by Packet Cloud. This means you can easily deploy the lab, follow some simple setup instructions, and you will have your own OpenShift cluster to work on with full admin access. 
+As mentioned above, the entire environment is deployed within infrastructure hosted by Packet Cloud. This means you can easily deploy the lab, follow some simple setup instructions, and you will have your own bare-metal OpenShift cluster to work on, with full admin access. 
 
 The deployment is visualised as follows:
 
@@ -51,7 +51,7 @@ Within this environment you can access all aspects of the lab through the deploy
 
 ### Getting Started
 
-Packet provides full intructions for setting up your account including your unique username, UID, and passwords.
+Packet provides full instructions for setting up your account, including your unique username, UID, and passwords.
 
 Here are the details to use them:
 
