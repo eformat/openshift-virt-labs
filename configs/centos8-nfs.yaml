@@ -11,10 +11,10 @@ metadata:
     app: centos8-nfs
     flavor.template.kubevirt.io/small: 'true'
     os.template.kubevirt.io/rhel8.2: 'true'
-    vm.kubevirt.io/template: rhel8-server-small-v0.10.0
+    vm.kubevirt.io/template: rhel8-server-small-v0.11.3
     vm.kubevirt.io/template.namespace: openshift
     vm.kubevirt.io/template.revision: '1'
-    vm.kubevirt.io/template.version: v0.11.2
+    vm.kubevirt.io/template.version: v0.11.3
     workload.template.kubevirt.io/server: 'true'
 spec:
   running: true
@@ -24,10 +24,10 @@ spec:
       labels:
         flavor.template.kubevirt.io/small: 'true'
         os.template.kubevirt.io/rhel8.2: 'true'
-        vm.kubevirt.io/template: rhel8-server-small-v0.10.0
+        vm.kubevirt.io/template: rhel8-server-small-v0.11.3
         vm.kubevirt.io/template.namespace: openshift
         vm.kubevirt.io/template.revision: '1'
-        vm.kubevirt.io/template.version: v0.11.2
+        vm.kubevirt.io/template.version: v0.11.3
         workload.template.kubevirt.io/server: 'true'
     spec:
       domain:
@@ -71,23 +71,6 @@ spec:
                 #cloud-config
                 password: redhat
                 chpasswd: {expire: False}
-                write_files:
-                  - content: |
-                      # hi
-                      DEVICE=eth0
-                      HWADDR=de:ad:be:ef:00:01
-                      ONBOOT=yes
-                      TYPE=Ethernet
-                      USERCTL=no
-                      IPADDR=192.168.47.5
-                      PREFIX=24
-                      GATEWAY=192.168.47.1   
-                      DNS1=150.239.16.11
-                      DNS2=150.239.16.12
-                    path:  /etc/sysconfig/network-scripts/ifcfg-eth0
-                    permissions: '0644'
                 runcmd:
-                  - ifdown eth0
-                  - ifup eth0
                   - systemctl restart qemu-guest-agent.service
           name: cloudinitdisk
