@@ -2,7 +2,7 @@
 
 **Authors**: [Rhys Oxenham](mailto:roxenham@redhat.com) and [August Simonelli](mailto:asimonel@redhat.com)
 
-**Packet revision**: [Mike Savage](mailto:savage@redhat.com)
+**Packet Cloud revision**: [Mike Savage](mailto:savage@redhat.com)
 
 # Welcome!
 
@@ -27,15 +27,15 @@ The lab uses official Red Hat downstream components, where **OpenShift Virtualiz
 
 The lab runs you through the following OpenShift Virtualization tasks:
 
-* **[Validating the OpenShift deployment](https://github.com/RHFieldProductManagement/openshift-virt-labs/blob/rhpds/docs/workshop/content/validation.md)**
-* **[Deploying OpenShift Virtualization](https://github.com/RHFieldProductManagement/openshift-virt-labs/blob/rhpds/docs/workshop/content/deploy-cnv.md)**
-* **[Setting up Storage for OpenShift Virtualization](https://github.com/RHFieldProductManagement/openshift-virt-labs/blob/rhpds/docs/workshop/content/storage-setup.md)**
-* **[Setting up Networking for OpenShift Virtualization](https://github.com/RHFieldProductManagement/openshift-virt-labs/blob/rhpds/docs/workshop/content/network-setup.md)**
-* **[Deploying Test Workloads](https://github.com/RHFieldProductManagement/openshift-virt-labs/blob/rhpds/docs/workshop/content/deploy-workloads.md)**
-* **[Cloning Workloads](https://github.com/RHFieldProductManagement/openshift-virt-labs/blob/rhpds/docs/workshop/content/cloning.md)**
-* **[Performing Live Migrations and Node Maintenance](https://github.com/RHFieldProductManagement/openshift-virt-labs/blob/rhpds/docs/workshop/content/live-migration.md)**
-* **[Utilising pod networking for VM's](https://github.com/RHFieldProductManagement/openshift-virt-labs/blob/rhpds/docs/workshop/content/masquerade.md)**
-* **[Using the OpenShift Web Console with OpenShift Virtualization](https://github.com/RHFieldProductManagement/openshift-virt-labs/blob/rhpds/docs/workshop/content/console.md)** 
+* **[Validating the OpenShift deployment](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/validation.md)**
+* **[Deploying OpenShift Virtualization](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/deploy-cnv.md)**
+* **[Setting up Storage for OpenShift Virtualization](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/storage-setup.md)**
+* **[Setting up Networking for OpenShift Virtualization](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/network-setup.md)**
+* **[Deploying Test Workloads](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/deploy-workloads.md)**
+* **[Cloning Workloads](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/cloning.md)**
+* **[Performing Live Migrations and Node Maintenance](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/live-migration.md)**
+* **[Utilising pod networking for VM's](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/masquerade.md)**
+* **[Using the OpenShift Web Console with OpenShift Virtualization](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/console.md)** 
 
 As mentioned above, the entire environment is deployed within infrastructure hosted by Packet Cloud. This means you can easily deploy the lab, follow some simple setup instructions, and you will have your own bare-metal OpenShift cluster to work on, with full admin access. 
 
