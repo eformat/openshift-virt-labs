@@ -11,10 +11,10 @@ metadata:
     app: centos8-server-hostpath
     flavor.template.kubevirt.io/small: 'true'
     os.template.kubevirt.io/rhel8.2: 'true'
-    vm.kubevirt.io/template: rhel8-server-small-v0.10.0
+    vm.kubevirt.io/template: rhel7-server-small-v0.11.3
     vm.kubevirt.io/template.namespace: openshift
     vm.kubevirt.io/template.revision: '1'
-    vm.kubevirt.io/template.version: v0.11.2
+    vm.kubevirt.io/template.version: v0.11.3
     workload.template.kubevirt.io/server: 'true'
 spec:
   running: true
@@ -24,10 +24,10 @@ spec:
       labels:
         flavor.template.kubevirt.io/small: 'true'
         os.template.kubevirt.io/rhel8.2: 'true'
-        vm.kubevirt.io/template: rhel8-server-small-v0.10.0
+        vm.kubevirt.io/template: rhel7-server-small-v0.11.3
         vm.kubevirt.io/template.namespace: openshift
         vm.kubevirt.io/template.revision: '1'
-        vm.kubevirt.io/template.version: v0.11.2
+        vm.kubevirt.io/template.version: v0.11.3
         workload.template.kubevirt.io/server: 'true'
     spec:
       domain:
