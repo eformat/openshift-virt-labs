@@ -48,36 +48,44 @@ The deployment is visualised as follows:
 Within this environment you can access all aspects of the lab through the deployed lab guide. You receive details regarding how to access the guide upon completion of the ansible ocp4-workload-cnv automated deployment.
 
 > **NOTE**: For the purposes of this repo and the labs themselves, any reference to "CNV", "Container-native Virtualization" and "OpenShift Virtualization", and "KubeVirt" can be used interchangeably.
-
+installed
 ### Getting Started
 
-Packet provides full instructions for setting up your account, including your unique username, UID, and passwords.
+1) Start with **[OpenShift on Packet via Terraform](https://github.com/heatmiser/openshift-packet-deploy)**
 
-Here are the details to use them:
+   Jump to the instructions [here](https://github.com/heatmiser/openshift-packet-deploy/blob/master/terraform/README.md)
 
-1) SSH to the loadbalancer (aka "lb" or bastion host) created for you and port forward your local hosts' port 8080 to the squid port on the bastion (3128)
+   Once completed, you will have a full OpenShift cluster running on Packet's bare metal cloud.
 
-~~~bash
-$ ssh USERNAME@bastion.UID.dynamic.opentlc.com -L 8080:127.0.0.1:3128
-~~~
+2) If not already in place, [install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on the system that was utilized to deploy OpenShift on Packet Cloud via Terraform.
 
-This allows you to connect a browser to local port 8080 and see the "Public" network in the lab.
+3) Next, clone the heatmiser/agnosticd repo from GitHub and checkout the `packet-cnv` branch:
 
->**NOTE**: Full SSH connection details, including username, hostname, and password are available via the Packet admin portal.
+     ```bash
+     git clone https://github.com/heatmiser/agnosticd.git
+     cd agnosticd
+     git checkout packet-cnv
+     ```
 
-2) Set your browser (we've tested Firefox and had the most success with this - your mileage may vary with other browsers) to use localhost:8080 for all protocols, and make sure you enable DNS over SOCKSv5 - this avoids any challenges with local DNS:
+   In the base of the agnosticd directory, you should see a script named `agnosticd_deploy_workload`.
+   Edit this file, setting the variables `BASTION`, `SUBDOMAIN_BASE` and `ANSIBLE_USER_KEY_FILE` from values derived from the OpenShift on Packet deployment in step 1. Execute the script, which will run an ansible-playbook that deploys the OpenShift Virtualization Lab Workbook lab on the OpenShift cluster on Packet Cloud.
 
-<center>
-    <img src="docs/workshop/content/img/firefox-proxy.png"/>
-</center>
+     ```bash
+     chmod +x agnosticd_deploy_workload
+     ./agnosticd_deploy_workload
+     ```
 
-3) Open the URL for the OpenShift Virtualization Lab Workbook via web browser (the "CNV Lab Workbook" value, which looks like https://cnv-workbook.apps.your.unique.domain/)
+   After several minutes, the lab deployment will be complete.  Review the output from the ansible-playbook, as it will have information regarding the deployment of the lab.
+
+4) Open the URL for the OpenShift Virtualization Lab Workbook via web browser (the "CNV Lab Workbook" value, which looks like https://cnv-workbook.apps.your.unique.domain/)
 
 >**NOTE**: You will need to accept the SSL warnings but you do not need to login to the workbook.
 
 <center>
     <img src="docs/workshop/content/img/lab-cli-view.png"/>
 </center>
+
+5) Enjoy the lab!!!
 
 ### Contributing
 
