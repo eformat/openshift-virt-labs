@@ -18,7 +18,7 @@ The lab content is presented in three easy to use panes consisting of the follow
 
 You'll have access to an OpenShift CLI environment as well as the console.
 
-All labs steps are expected to be run from *within* this environment; you do not need to use the lb/bastion's CLI or login to the OpenShift Console directly, however, utilizing the load-balancer/bastion node can be useful for instances where multiple CLI sessions are desirable.
+Once deployed, all labs steps are expected to be run from *within* the workbook/lab environment; you do not need to use the lb/bastion's CLI or login to the OpenShift Console directly, however, utilizing the load-balancer/bastion node can be useful for instances where multiple CLI sessions are desirable.
 
 
 # Lab content
@@ -37,15 +37,15 @@ The lab runs you through the following OpenShift Virtualization tasks:
 * **[Utilizing pod networking for VM's](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/masquerade.md)**
 * **[Using the OpenShift Web Console with OpenShift Virtualization](https://github.com/heatmiser/openshift-virt-labs/blob/packet/docs/workshop/content/console.md)** 
 
-As mentioned above, the entire environment is deployed within infrastructure hosted by Packet Cloud. This means you can easily deploy the lab, follow some simple setup instructions, and you will have your own bare-metal OpenShift cluster to work on, with full admin access. 
+As mentioned above, the entire environment is deployed within OpenShift infrastructure hosted by Packet Cloud. This means you can easily deploy the lab, follow some simple setup instructions, and you will have your own bare-metal OpenShift cluster to work on, with full admin access. 
 
-The deployment is visualised as follows:
+The deployment is visualized as follows:
 
 <center>
     <img src="docs/workshop/content/img/labarch.png"/>
 </center>
 
-Within this environment you can access all aspects of the lab through the deployed lab guide. You receive details regarding how to access the guide upon completion of the ansible ocp4-workload-cnv automated deployment.
+Within this environment you can access all aspects of the lab through the deployed lab guide. You receive details regarding how to access the guide upon completion of the installation/deployment steps.
 
 > **NOTE**: For the purposes of this repo and the labs themselves, any reference to "CNV", "Container-native Virtualization" and "OpenShift Virtualization", and "KubeVirt" can be used interchangeably.
 installed
