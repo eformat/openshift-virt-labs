@@ -19,7 +19,7 @@ This is the self-hosted lab guide that will run you through the following:
 
 ## Lab Setup
 
-The entire lab _can__ be run from within the hosted lab environment you are in now. The lab environment provides both a CLI with the tools you need (oc, virtctl) as well as access to the OpenShift console as a privileged user. Switching between the console and the CLI enviornment is easy. At the top middle of the lab guide you'll find a link to switch between the "**Terminal**" and the "**Console**". At times, it may be convenient to also access the OpenShift cluster via the lb/bastion system. Note, if you do use the lb/bastion node, you will need to export the localtion of the kubeconfig authorization file:
+The entire lab __can__ be run from within the hosted lab environment you are in now. The lab environment provides both a CLI with the tools you need (oc, virtctl) as well as access to the OpenShift console as a privileged user. Switching between the console and the CLI enviornment is easy. At the top middle of the lab guide you'll find a link to switch between the "**Terminal**" and the "**Console**". At times, it may be convenient to also access the OpenShift cluster via the lb/bastion system. Note, if you do use the lb/bastion node, you will need to export the localtion of the kubeconfig authorization file:
 
 ~~~bash
 $ export KUBECONFIG=~/ocp4upi/artifacts/install/auth/kubeconfig
