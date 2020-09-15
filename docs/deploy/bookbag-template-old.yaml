@@ -14,7 +14,7 @@ objects:
     annotations:
       serviceaccounts.openshift.io/oauth-redirectreference.first: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"${NAME}-${SUFFIX}"}}'
       serviceaccounts.openshift.io/oauth-redirecturi.first: oauth_callback
-      serviceaccounts.openshift.io/oauth-want-challenges: "false"
+      serviceaccounts.openshift.io/oauth-want-challenges: "true"
     labels:
       app: ${NAME}-${SUFFIX}
     name: ${NAME}-${SUFFIX}-user
