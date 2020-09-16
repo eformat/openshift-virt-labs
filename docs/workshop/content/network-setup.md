@@ -272,3 +272,4 @@ When needing to query NetworkAttachmentDefinition(s), the shortcut name is "net-
 $ oc get net-attach-def
 NAME                  AGE
 tuning-bridge-fixed   2m4s
+~~~
